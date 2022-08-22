@@ -12,8 +12,6 @@ class Application(tk.Tk):
         self.geometry('450x250')
 
         # Adding Exit button at the bottom of window
-        exit = ttk.Button(self,
-                          text="Exit", command=self.quit).place(x=360, y=210)
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -21,6 +19,8 @@ class Application(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        exit = ttk.Button(self,
+                          text="Exit", command=self.quit).pack(side="right", padx=10, pady=10)
         # initialising frames
 
         self.frames = {}
@@ -45,33 +45,39 @@ class LoginPage(tk.Frame):
 
         # Labels
         login = ttk.Label(self, text="Login").place(x=200, y=20)
+
         username = ttk.Label(self,
-                             text="Username").place(x=60,
+                             text="Username").place(x=20,
                                                     y=60)
         password = ttk.Label(self,
-                             text="Password").place(x=60,
+                             text="Password").place(x=20,
                                                     y=100)
         register = ttk.Label(
-            self, text="Not a member?").place(x=30, y=215)
+            self, text="Not a member?").place(x=300, y=80)
+
+        # Separator
+        separator = ttk.Separator(self, orient="vertical")
+        separator.place(relheight=0.6, relwidth=0, relx=0.56, rely=0.23)
 
         # Entry
-        username_input = ttk.Entry(self,
-                                   width=30)
-        username_input.place(x=130, y=60)
-        password_input = ttk.Entry(self, show="*",
-                                   width=30)
-        password_input.place(x=130, y=100)
+        self.username_input = ttk.Entry(self,
+                                        width=20)
+        self.username_input.place(x=90, y=60)
+        self.password_input = ttk.Entry(self, show="*",
+                                        width=20)
+        self.password_input.place(x=90, y=100)
 
         # Buttons
-        submit = ttk.Button(self,
-                            text="Submit", command=self.on_submit).place(x=270,
-                                                                         y=130)
+        login = ttk.Button(self,
+                           text="Login", command=self.on_login).place(x=158,
+                                                                      y=130)
 
         register_button = ttk.Button(self,
-                                     text="Register", command=lambda: controller.show_frame(RegisterPage)).place(x=130, y=210)
+                                     text="Register",
+                                     command=lambda: controller.show_frame(RegisterPage)).place(x=310, y=110)
 
     # Methods
-    def on_submit(self):
+    def on_login(self):
         print(self.username_input.get())
         print(self.password_input.get())
 
