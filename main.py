@@ -1,5 +1,11 @@
+from queue import Empty
 import tkinter as tk
 from tkinter import ttk
+from tkinter.messagebox import *
+import pandas as pd
+
+DB_FILE = 'database.xlsx'
+db = pd.read_excel(DB_FILE)
 
 
 class Application(tk.Tk):
@@ -124,16 +130,30 @@ class RegisterPage(tk.Frame):
                                                                          y=180)
 
     def on_submit(self):
-        print(self.username_input.get())
-        print(self.password_input.get())
-        print(self.fullname_input.get())
-        print(self.cnfpassword_input.get())
+        global db
+        new_data_series = pd.Series(data=[self.username_input.get(),
+                                          self.fullname_input.get(), self.password_input.get()],
+                                    index=['username', 'fullname', 'password'])
+        if self.cnfpassword_input.get() != self.password_input.get():
+            showerror("error", "Password Mismatch")
+        elif db.empty:
+            db = db.append(new_data_series, ignore_index=True)
+            db.to_excel(DB_FILE, index=False)
+        else:
+            # check if username exists or not
+            if db.isin([self.username_input.get()]).any().any():
+                # username is already present show an error
+                showerror("error", "Username already present")
+            else:
+                # username is not present, insert into db
+                db = db.append(new_data_series, ignore_index=True)
+                db.to_excel(DB_FILE, index=False)
 
 
 class ProcessPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        login = ttk.Label(self, text="Process Page").place(x=200, y=20)
+        process = ttk.Label(self, text="Process Page").place(x=200, y=20)
 
 
 if __name__ == "__main__":
