@@ -136,10 +136,10 @@ class RegisterPage(tk.Frame):
 
         # Button
         submit = ttk.Button(self,
-                            text="Submit", command=self.on_submit).place(x=180,
-                                                                         y=180)
+                            text="Submit", command=lambda: self.on_submit(controller)).place(x=180,
+                                                                                             y=180)
 
-    def on_submit(self):
+    def on_submit(self, controller):
         global db
         new_data_series = pd.Series(data=[self.username_input.get(),
                                           self.fullname_input.get(), self.password_input.get()],
@@ -149,6 +149,8 @@ class RegisterPage(tk.Frame):
         elif db.empty:
             db = db.append(new_data_series, ignore_index=True)
             db.to_excel(DB_FILE, index=False)
+            showinfo('Success', 'Registration Successful. Please login now')
+            controller.show_frame(LoginPage)
         else:
             # check if username exists or not
             if db['username'].isin([self.username_input.get()]).any().any():
@@ -158,6 +160,8 @@ class RegisterPage(tk.Frame):
                 # username is not present, insert into db
                 db = db.append(new_data_series, ignore_index=True)
                 db.to_excel(DB_FILE, index=False)
+                showinfo('Success', 'Registration Successful. Please login now')
+                controller.show_frame(LoginPage)
 
 
 class ProcessPage(tk.Frame):
