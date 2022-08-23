@@ -85,7 +85,49 @@ class LoginPage(tk.Frame):
 class RegisterPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        login = ttk.Label(self, text="Registration").place(x=180, y=20)
+        registration = ttk.Label(self, text="Registration").place(x=180, y=20)
+
+        # Labels in Registration page
+        fullname = ttk.Label(self,
+                             text="Full Name").place(x=40,
+                                                     y=60)
+        username = ttk.Label(self,
+                             text="Username").place(x=250,
+                                                    y=60)
+        password = ttk.Label(self,
+                             text="Password").place(x=40,
+                                                    y=120)
+        confirm_password = ttk.Label(self,
+                                     text="Confirm Password").place(x=250,
+                                                                    y=120)
+
+        # Entries in Registration page
+        self.fullname_input = ttk.Entry(self,
+                                        width=20)
+        self.fullname_input.place(x=40, y=80)
+
+        self.username_input = ttk.Entry(self,
+                                        width=20)
+        self.username_input.place(x=250, y=80)
+
+        self.password_input = ttk.Entry(self,
+                                        width=20, show="*")
+        self.password_input.place(x=40, y=140)
+
+        self.cnfpassword_input = ttk.Entry(self,
+                                           width=20, show="*")
+        self.cnfpassword_input.place(x=250, y=140)
+
+        # Button
+        submit = ttk.Button(self,
+                            text="Submit", command=self.on_submit).place(x=180,
+                                                                         y=180)
+
+    def on_submit(self):
+        print(self.username_input.get())
+        print(self.password_input.get())
+        print(self.fullname_input.get())
+        print(self.cnfpassword_input.get())
 
 
 class ProcessPage(tk.Frame):
