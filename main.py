@@ -75,17 +75,27 @@ class LoginPage(tk.Frame):
 
         # Buttons
         login = ttk.Button(self,
-                           text="Login", command=self.on_login).place(x=158,
-                                                                      y=130)
+                           text="Login", command=lambda: self.on_login(controller)).place(x=158,
+                                                                                          y=130)
 
         register_button = ttk.Button(self,
                                      text="Register",
                                      command=lambda: controller.show_frame(RegisterPage)).place(x=310, y=110)
 
     # Methods
-    def on_login(self):
-        print(self.username_input.get())
-        print(self.password_input.get())
+    def on_login(self, controller):
+        data_series = pd.Series(data=[self.username_input.get(), self.password_input.get()],
+                                index=['username', 'password'])
+        if db['username'].isin([self.username_input.get()]).any().any():
+            # check if password is correct
+            user_details = db[db['username'].isin([self.username_input.get()])]
+            if self.password_input.get() == str(user_details['password'].iloc[0]):
+                controller.show_frame(ProcessPage)
+            else:
+                showerror("error", "incorrect password")
+        else:
+            # user does not exists
+            showerror("error", "username does not exists")
 
 
 class RegisterPage(tk.Frame):
@@ -141,7 +151,7 @@ class RegisterPage(tk.Frame):
             db.to_excel(DB_FILE, index=False)
         else:
             # check if username exists or not
-            if db.isin([self.username_input.get()]).any().any():
+            if db['username'].isin([self.username_input.get()]).any().any():
                 # username is already present show an error
                 showerror("error", "Username already present")
             else:
@@ -153,7 +163,7 @@ class RegisterPage(tk.Frame):
 class ProcessPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        process = ttk.Label(self, text="Process Page").place(x=200, y=20)
+        process = ttk.Label(self, text="Process").place(x=180, y=20)
 
 
 if __name__ == "__main__":
