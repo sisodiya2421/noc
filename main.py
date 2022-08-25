@@ -1,10 +1,16 @@
-from queue import Empty
+import logging
+from time import sleep
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import *
 import pandas as pd
+import subprocess
+import os
+import platform
+from scrape import Scrapper
 
 DB_FILE = 'database.xlsx'
+OUTPUT_FILE = 'output.xlsx'
 db = pd.read_excel(DB_FILE)
 
 
@@ -167,7 +173,37 @@ class RegisterPage(tk.Frame):
 class ProcessPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        process = ttk.Label(self, text="Process").place(x=180, y=20)
+        process = ttk.Label(self, text="Process").place(x=200, y=20)
+        run_button = ttk.Button(self,
+                                text="Run",
+                                command=self.run, padding=10).place(x=185, y=100)
+
+    def run(self):
+        global OUTPUT_FILE
+        url = "https://www.myntra.com/men-tshirts?p=1"
+        scraper = Scrapper()
+        iteration = 3
+        scraped_data = None
+        for _ in range(0, iteration):
+            scrape = scraper.scrape(url)
+            scraped_data = scrape['scrapped_data']
+            if scrape['next_page'] != None:
+                url = scrape['next_page']
+        scraper.driver.close()
+        scraped_df = pd.DataFrame(scraped_data)
+        scraped_df.to_excel(OUTPUT_FILE, index=False)
+        answer = askokcancel("Scrapping completed",
+                             "Do you want to open the generated file?", icon='info')
+        if answer:
+            try:
+                if platform.system() == 'Darwin':       # macOS
+                    subprocess.call(('open', OUTPUT_FILE))
+                elif platform.system() == 'Windows':    # Windows
+                    os.startfile(OUTPUT_FILE)
+                else:                                   # linux variants
+                    subprocess.call(("xdg-open", OUTPUT_FILE))
+            except Exception as e:
+                logging.error(f"some error occured : {e}")
 
 
 if __name__ == "__main__":
