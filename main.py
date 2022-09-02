@@ -7,6 +7,7 @@ import subprocess
 import os
 import platform
 from scrape import Scrapper
+import matplotlib.pyplot as plt
 
 DB_FILE = 'database.xlsx'
 OUTPUT_FILE = 'output.xlsx'
@@ -191,6 +192,12 @@ class ProcessPage(tk.Frame):
         scraper.driver.close()
         scraped_df = pd.DataFrame(scraped_data)
         scraped_df.to_excel(OUTPUT_FILE, index=False)
+        scraped_df = scraped_df.groupby(
+            by="brand").mean().reset_index()
+        scraped_df["rating"] = scraped_df["rating"].astype("float")
+        plot = scraped_df.plot.barh(x="brand", y="rating", figsize=(15, 10))
+        fig = plot.get_figure()
+        fig.savefig("result.png")
         answer = askokcancel("Scrapping completed",
                              "Do you want to open the generated file?", icon='info')
         if answer:

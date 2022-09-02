@@ -47,7 +47,7 @@ class Scrapper():
                 self.brands.append(brand)
                 self.prices.append(price)
                 self.img_urls.append(img_url)
-                self.ratings.append(rating)
+                self.ratings.append(float(rating))
         except ElementNotInteractableException as err:
             logging.exception(f"Error occured while extraction : {err}")
 
