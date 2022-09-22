@@ -7,10 +7,12 @@ import subprocess
 import os
 import platform
 from scrape import Scrapper
+from matching import ExcelMatching
 import matplotlib.pyplot as plt
 
 DB_FILE = 'database.xlsx'
-OUTPUT_FILE = 'output.xlsx'
+OUTPUT_FILE = './outputs/output.xlsx'
+MATCHING_OUTPUT = './outputs/matching_result.xlsx'
 db = pd.read_excel(DB_FILE)
 
 
@@ -174,11 +176,46 @@ class ProcessPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         process = ttk.Label(self, text="Process").place(x=200, y=20)
-        run_button = ttk.Button(self,
-                                text="Run",
-                                command=self.run, padding=10).place(x=185, y=100)
 
-    def run(self):
+        scrape_button = ttk.Button(self,
+                                   text="Scrape Website",
+                                   command=self.scrape, padding=10).place(x=55, y=80)
+
+        pdf_extraction = ttk.Button(self,
+                                    text="PDF Extraction",
+                                    command=self.scrape, padding=10).place(x=260, y=80)
+
+        pivot = ttk.Button(self,
+                           text="Excel Pivot",
+                           command=self.scrape, padding=10).place(x=55, y=150)
+
+        excel_matching = ttk.Button(self,
+                                    text="Excel Matching",
+                                    command=self.excel_matching, padding=10).place(x=260, y=150)
+
+    def pivot(self):
+        pass
+
+    def pdf_extractor(self):
+        pass
+
+    def excel_matching(self):
+        match = ExcelMatching()
+        match.match()
+        answer = askokcancel("Excels Matching Complete",
+                             "Do you want to open the generated file?", icon='info')
+        if answer:
+            try:
+                if platform.system() == 'Darwin':       # macOS
+                    subprocess.call(('open', MATCHING_OUTPUT))
+                elif platform.system() == 'Windows':    # Windows
+                    os.startfile(MATCHING_OUTPUT)
+                else:                                   # linux variants
+                    subprocess.call(("xdg-open", MATCHING_OUTPUT))
+            except Exception as e:
+                logging.error(f"some error occured : {e}")
+
+    def scrape(self):
         global OUTPUT_FILE
         url = "https://www.myntra.com/men-tshirts?p=1"
         scraper = Scrapper()
