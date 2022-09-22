@@ -10,13 +10,15 @@ from scrape import Scrapper
 from matching import ExcelMatching
 from pdfextractor import PdfExtractor
 from pivot import Pivot
-import matplotlib.pyplot as plt
+from pathlib import Path
+
+output_folder = Path('./outputs/')
 
 DB_FILE = 'database.xlsx'
-OUTPUT_FILE = './outputs/output.xlsx'
-MATCHING_OUTPUT = './outputs/matching_result.xlsx'
-PDF_OUTPUT = './outputs/pdf_extracted_output.xlsx'
-PIVOT_OUTPUT = './outputs/pivot_output.xlsx'
+OUTPUT_FILE = output_folder / "output.xlsx"
+MATCHING_OUTPUT = output_folder / 'matching_result.xlsx'
+PDF_OUTPUT = output_folder / 'pdf_extracted_output.xlsx'
+PIVOT_OUTPUT = output_folder / 'pivot_output.xlsx'
 db = pd.read_excel(DB_FILE)
 
 

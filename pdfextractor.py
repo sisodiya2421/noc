@@ -1,11 +1,13 @@
 import tabula
 import pandas as pd
+from pathlib import Path
 
 
 class PdfExtractor:
     def __init__(self):
+        folder = Path('./files/')
         self.tables = tabula.read_pdf(
-            "./files/Climate.pdf", pages=3, multiple_tables=True)
+            folder / 'Climate.pdf', pages=3, multiple_tables=True)
 
     def extract(self):
         self.tables[0].rename(columns={'Mean\rMax.\rTemp.\r(oC)': 'Mean_Max_Temp',
@@ -26,7 +28,8 @@ class PdfExtractor:
         self.tables[0][cols] = self.tables[0][cols].apply(
             pd.to_numeric, errors='coerce', axis=1)
 
+        output_folder = Path('./outputs/')
         self.tables[0].to_excel(
-            "./outputs/pdf_extracted_output.xlsx", index=False)
+            output_folder / 'pdf_extracted_output.xlsx', index=False)
 
         return True
