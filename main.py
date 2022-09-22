@@ -8,11 +8,13 @@ import os
 import platform
 from scrape import Scrapper
 from matching import ExcelMatching
+from pdfextractor import PdfExtractor
 import matplotlib.pyplot as plt
 
 DB_FILE = 'database.xlsx'
 OUTPUT_FILE = './outputs/output.xlsx'
 MATCHING_OUTPUT = './outputs/matching_result.xlsx'
+PDF_OUTPUT = './outputs/pdf_extracted_output.xlsx'
 db = pd.read_excel(DB_FILE)
 
 
@@ -183,11 +185,11 @@ class ProcessPage(tk.Frame):
 
         pdf_extraction = ttk.Button(self,
                                     text="PDF Extraction",
-                                    command=self.scrape, padding=10).place(x=260, y=80)
+                                    command=self.pdf_extractor, padding=10).place(x=260, y=80)
 
         pivot = ttk.Button(self,
                            text="Excel Pivot",
-                           command=self.scrape, padding=10).place(x=55, y=150)
+                           command=self.pivot, padding=10).place(x=55, y=150)
 
         excel_matching = ttk.Button(self,
                                     text="Excel Matching",
@@ -197,7 +199,20 @@ class ProcessPage(tk.Frame):
         pass
 
     def pdf_extractor(self):
-        pass
+        extractor = PdfExtractor()
+        extractor.extract()
+        answer = askokcancel("PDF Extraction Complete",
+                             "Do you want to open the generated file?", icon='info')
+        if answer:
+            try:
+                if platform.system() == 'Darwin':       # macOS
+                    subprocess.call(('open', PDF_OUTPUT))
+                elif platform.system() == 'Windows':    # Windows
+                    os.startfile(PDF_OUTPUT)
+                else:                                   # linux variants
+                    subprocess.call(("xdg-open", PDF_OUTPUT))
+            except Exception as e:
+                logging.error(f"some error occured : {e}")
 
     def excel_matching(self):
         match = ExcelMatching()
