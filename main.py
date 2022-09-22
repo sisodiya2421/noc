@@ -9,12 +9,14 @@ import platform
 from scrape import Scrapper
 from matching import ExcelMatching
 from pdfextractor import PdfExtractor
+from pivot import Pivot
 import matplotlib.pyplot as plt
 
 DB_FILE = 'database.xlsx'
 OUTPUT_FILE = './outputs/output.xlsx'
 MATCHING_OUTPUT = './outputs/matching_result.xlsx'
 PDF_OUTPUT = './outputs/pdf_extracted_output.xlsx'
+PIVOT_OUTPUT = './outputs/pivot_output.xlsx'
 db = pd.read_excel(DB_FILE)
 
 
@@ -196,7 +198,20 @@ class ProcessPage(tk.Frame):
                                     command=self.excel_matching, padding=10).place(x=260, y=150)
 
     def pivot(self):
-        pass
+        pivot_creator = Pivot()
+        pivot_creator.createPivot()
+        answer = askokcancel("Pivot Creation Complete",
+                             "Do you want to open the generated file?", icon='info')
+        if answer:
+            try:
+                if platform.system() == 'Darwin':       # macOS
+                    subprocess.call(('open', PIVOT_OUTPUT))
+                elif platform.system() == 'Windows':    # Windows
+                    os.startfile(PIVOT_OUTPUT)
+                else:                                   # linux variants
+                    subprocess.call(("xdg-open", PIVOT_OUTPUT))
+            except Exception as e:
+                logging.error(f"some error occured : {e}")
 
     def pdf_extractor(self):
         extractor = PdfExtractor()
