@@ -5,7 +5,7 @@ from pathlib import Path
 
 class Pivot:
     def __init__(self):
-        folder = Path('./outputs/')
+        folder = Path('./files/')
         self.df = pd.read_csv(folder / 'titanic.csv')
 
     def createPivot(self):
